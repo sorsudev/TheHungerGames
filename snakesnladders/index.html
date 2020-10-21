@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Serpientes y escaleras</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+    <div class="gameBoard" id="gameBoardOuter">
+        <div id='messages'><span>Cargando Usuarios</span></div>
+        <div id="gameBoard" class="gameBoardInner"></div>
+        <div class="gameInterface">
+            <div class="dice show3" id="dice">
+                <div><span></span></div>
+                <div><span></span><span></span></div>
+                <div><span></span><span></span><span></span></div>
+                <div>
+                    <div>
+                        <span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+            <div id="player" class="player"></div>
+            <button id="play" onclick="app.play()">Girar Dado</button>
+        </div>
+        <div id="playersList" class="players">
+        </div>
+        <p class="credits">Board based on Milton Bradley game</p>
+        <div class="dialog" id="dialog">
+            <h1 id="dialogText">Computer Wins!</h1>
+            <button onclick="app.reset()">Play Again</button>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script src="./js/functions.js"></script>
+</html>
