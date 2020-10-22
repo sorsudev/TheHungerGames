@@ -310,21 +310,21 @@ var app = (function() {
                 {
                     name: "Oscar",
                     win: "You Win!",
-                    position: 0,
+                    position: 10,
                     element: null,
                     color: 'cyan'
                 },
                 {
                     name: "Carlos",
                     win: "You Win ooooo!",
-                    position: 0,
+                    position: 50,
                     element: null,
                     color: 'green'
                 },
                 {
                     name: "Miguel",
                     win: "You Win ooooo!",
-                    position: 0,
+                    position: 30,
                     element: null,
                     color: 'pink'
                 }
@@ -370,6 +370,9 @@ var app = (function() {
 
             gridReference = [];
             buildGameBoard();
+            setTimeout(function(){
+                players.forEach(buildMarker);
+            }, 1000);
 
         }, 1000);
 
