@@ -1,0 +1,115 @@
+body{
+  background-color: #f4f4f4;
+}
+
+h1{
+  text-align: center;
+}
+
+.cuadro{
+  background-color: #0a7fa5;
+  margin: 30px auto;
+  width: 90%;
+  height: 100%;
+  padding: 10px;
+  margin-top: 0;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.lados{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 40%;
+  background-color: #b3e2e6;
+
+  margin: 10px;
+  padding: 40px 0;
+}
+
+.lados i{
+  text-align: center;
+  margin: 10px 20px;
+  cursor: pointer;
+  color: #cecece;
+  border: 2px solid #fff;
+  background: #424242;
+  padding: 10px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.lados i:hover{
+  color: #fff;
+  transform: scale(1.6);
+}
+
+.arriba{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+.arriba h3{
+  margin: 2px 0 6px;
+}
+.jugadores{
+  text-align: center;
+}
+.jugador{
+  color: #f4f4f4;
+}
+.jugadores .jugador:before{
+  content: "Jugador: ";
+  color: #383838;
+  font-weight: bold;
+}
+
+
+#userpuntos, #cpupuntos{
+  color: #fff;
+}
+#userpuntos:before, #cpupuntos:before{
+  content: "Puntos: ";
+}
+
+.abajo{
+  width: 100%;
+}
+.abajo h2{
+  text-align: center;
+
+}
+
+.vidas{
+  text-align: center;
+}
+.vidas i{
+  color: #f00;
+}
+#vida1, #vida2, #vida3, #cpuvida1, #cpuvida2, #cpuvida3{
+  display: inline;
+  text-shadow: 0 0 5px #fff;
+}
+#muerte1, #muerte2, #muerte3, #cpumuerte1, #cpumuerte2, #cpumuerte3{
+  display: none;
+}
+
+
+@media all and (max-width: 1102px){
+  .lados i:hover{
+    transform: scale(1.2);
+  }
+}
+@media all and (max-width: 996px){
+  .lados{
+    flex-wrap: wrap;
+  }
+
+  .lados i:hover{
+    color: #fff;
+    transform: scale(1);
+  }
+}

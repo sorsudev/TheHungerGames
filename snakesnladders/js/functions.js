@@ -307,11 +307,11 @@ var app = (function() {
         .then( (response) => {
           players = response.data;
 
-          currentPlayerIndex = getRandom(players.length);
-          axios.patch(`http://localhost:3000/players/${currentPlayerIndex+1}/setcurrent`, {
+          axios.get(`http://localhost:3000/players/getcurrent`, {
 
           })
             .then(function (response) {
+              currentPlayerIndex = response.id;
               var styleText = ".gameBoard > .players > div::before {" +
                 "content: ''; display: block; float: left;" +
                 "width: 24px; height: 24px; box-shadow: inset -2px -2px #565656;" +
@@ -350,6 +350,7 @@ var app = (function() {
 
               gridReference = [];
               buildGameBoard();
+              players.forEach(buildMarker);
             })
             .catch(function (error) {
               console.log(error);
@@ -849,7 +850,15 @@ var app = (function() {
                 if (currentPlayer.position > 0) {
                     var path = buildHop(currentPlayer.position);
                     currentPlayer.position++;
-                    animate(path, currentPlayer.element, 300, -counterRadius, -counterRadius, function () { doHop(n) });
+                    axios.patch(`http://localhost:3000/players/${currentPlayer.id}`, {
+                      position: currentPlayer.position
+                    })
+                      .then(function (response) {
+                        animate(path, currentPlayer.element, 300, -counterRadius, -counterRadius, function () { doHop(n) });
+                      })
+                      .catch(function (error) {
+                        console.log(error);
+                      });
                 } else {
                     {
                         currentPlayer.position = 1;

@@ -82,16 +82,15 @@ module.exports = function (fastify, opts, done) {
       }).fetch().then((player) => {
         return player.save(request.body, { patch: true })
           .then((player) => {
-            if (request.body.hasOwnProperty('password')) {
-              return player.updatePassword()
-                .then((player) => {
-                  return response.send(player);
-                })
-                .catch((err) => {
-                  return response.send(err);
-                });
-            } else 
+            if (!request.body.hasOwnProperty('password'))
               return response.send(player);
+            return player.updatePassword()
+              .then((player) => {
+                return response.send(player);
+              })
+              .catch((err) => {
+                return response.send(err);
+              });
           })
           .catch((err) => {
             return response.send(err);
@@ -162,6 +161,43 @@ module.exports = function (fastify, opts, done) {
         });
     }
   );
+  fastify.get(`${prefix}/getcurrent`, 
+  {
+    schema: {
+      security: [
+        {
+          Bearer: []
+        }
+      ],
+      description: 'Ruta para actualiza el Player actual que movera',
+      tags: ['Players'],
+      summary: 'Ruta para actualizar current player',
+      params: {
+        type: 'object',
+        properties: {
+          id: { type: 'number' },
+        }
+      },
+      response: {
+        201: {
+          description: 'Succesful response',
+          type: 'object',
+          properties: {
+            hello: { type: 'string' }
+          }
+        }
+      }
+    }
+  },
+  (request, response) => {
+    return Player.where({is_current: true}).fetch()
+      .then((player) => {
+        return response.send(player);
+      })
+      .catch((err) => {
+        return response.send(err);
+      });
+  });
   fastify.get(`${prefix}`,
     {
       schema: {
@@ -216,6 +252,50 @@ module.exports = function (fastify, opts, done) {
       Player.where({in_game: true}).fetchAll().then(function (players) {
         return response.send(players);
       });
+    }
+  );
+  fastify.post(`${prefix}/sign_in`,
+    {
+      schema: {
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        description: 'Proceso de autenticacion del Player',
+        tags: ['Player'],
+        summary: 'Valida Player',
+        body: {
+          type: 'object',
+          properties: {
+            email: { type: 'string' },
+            password: { type: 'string' },
+          }
+        },
+        response: {
+          201: {
+            description: 'Succesful response',
+            type: 'object',
+            properties: {
+              hello: { type: 'string' }
+            }
+          }
+        }
+      }
+    },
+    (request, response) => {
+      return Player.where({ email: request.body.email }).fetch()
+        .then((player) => {
+          if (!player)
+            return response.send({ error: 'datos no coinciden' });
+
+          return player.validatePassord(request.body.password).then((validateResponse) => {
+            if (!validateResponse)
+              return response.send({ error: 'datos no coinciden' });
+
+            return response.send(player);
+          });
+        });
     }
   );
 

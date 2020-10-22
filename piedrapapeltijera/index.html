@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Piedra, papel o tijera</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://kit.fontawesome.com/07834bbaf9.js"></script>
+  <link rel="icon" href="https://previews.123rf.com/images/sudowoodo/sudowoodo1708/sudowoodo170800052/84663577-iconos-de-piedra-papel-tijeras-ilustraci%C3%B3n-de-vector-aislado-.jpg">
+</head>
+<body>
+    <main>
+      <h1>Piedra, papel o tijera!</h1>
+      <div class="cuadro">
+        <div class="arriba">
+          <div class="jugadores">
+              <h3 class="jugador">Jugador</h3>
+              <div class="vidas">
+                <i id="vida1" class="fas fa-heart fa-2x"></i>
+                <i id="vida2" class="fas fa-heart fa-2x"></i>
+                <i id="vida3" class="fas fa-heart fa-2x"></i>
+                <i id="muerte1"class="fas fa-heart-broken fa-2x"></i>
+                <i id="muerte2"class="fas fa-heart-broken fa-2x"></i>
+                <i id="muerte3"class="fas fa-heart-broken fa-2x"></i>
+              </div>
+              <h3 id="userpuntos">0</h3>
+          </div>
+          <div class="jugadores">
+              <h3 class="jugador">CPU</h3>
+              <div class="vidas">
+                <i id="cpuvida1" class="fas fa-heart fa-2x"></i>
+                <i id="cpuvida2" class="fas fa-heart fa-2x"></i>
+                <i id="cpuvida3" class="fas fa-heart fa-2x"></i>
+                <i id="cpumuerte1"class="fas fa-heart-broken fa-2x"></i>
+                <i id="cpumuerte2"class="fas fa-heart-broken fa-2x"></i>
+                <i id="cpumuerte3"class="fas fa-heart-broken fa-2x"></i>
+              </div>
+              <h3 id="cpupuntos">0</h3>
+          </div>
+        </div>
+        <div class="lados">
+            <i id="piedra" onclick="piedra()" class="fas fa-hand-rock fa-5x"></i>
+            <i id="papel" onclick="papel()" class="fas fa-hand-paper fa-5x"></i>
+            <i id="tijera" onclick="tijera()" class="fas fa-hand-peace fa-5x"></i>
+        </div>
+        <div class="lados cpu">
+            <i id="cpupiedra" onclick="()" class="fas fa-hand-rock fa-5x"></i>
+            <i id="cpupapel" onclick="()" class="fas fa-hand-paper fa-5x"></i>
+            <i id="cputijera" onclick="()" class="fas fa-hand-peace fa-5x"></i>
+        </div>
+        <div class="abajo">
+          <h2 id="resultado">¡Resultado!</h2>
+        </div>
+      </div>
+    </main>
+</body>
+<script src="./js/functions.js"></script>
+</html>
