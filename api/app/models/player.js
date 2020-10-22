@@ -14,6 +14,12 @@ let Player = bookshelf.Model.extend({
       });
     }, this);
   },
+  updatePassword: async function() {
+    let that = this;
+    const hash = await bcrypt.hash(md5(this.attributes.password), 12);
+    that.set('password', hash);
+    return that.save();
+  },
   hashPassword: function(){
     return bcrypt.hash(md5(this.attributes.password), 12);
   },

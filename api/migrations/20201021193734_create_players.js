@@ -7,11 +7,13 @@ exports.up = function(knex) {
     table.string('email');
     table.string('name');
     table.string('win');
-    table.integer('position');
-    table.string('element');
+    table.integer('position').defaultTo(0);
+    table.string('element').defaultTo(null);
     table.string('color');
-    table.integer('positive_score');
-    table.integer('negative_score');
+    table.boolean('in_game').defaultTo(true);
+    table.boolean('is_current').defaultTo(false);
+    table.integer('positive_score').defaultTo(0);
+    table.integer('negative_score').defaultTo(0);
     table.timestamps();
   });
 };

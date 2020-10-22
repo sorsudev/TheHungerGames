@@ -28,7 +28,7 @@ fastify.register(require('fastify-swagger'), {
 });
 
 fastify.register(require('fastify-url-data'));
-fastify.register(require('fastify-cors'), {});
+fastify.register(require('fastify-cors'), { origin: '*' });
 fastify.register(require('./app/routes/players'));
 
 fastify.listen(3000, (err, address) => {

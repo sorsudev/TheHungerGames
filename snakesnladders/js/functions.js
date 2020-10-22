@@ -300,47 +300,27 @@ var app = (function() {
 
     function run() {
 
-        button = document.getElementById("play");
-        dialog = document.getElementById("dialog");
-        dialogText = document.getElementById("dialogText");
+      button = document.getElementById("play");
+      dialog = document.getElementById("dialog");
+      dialogText = document.getElementById("dialogText");
+      return axios.get('http://localhost:3000/players/ingame')
+        .then( (response) => {
+          players = response.data;
 
-        setTimeout(function(){
+          currentPlayerIndex = getRandom(players.length);
+          axios.patch(`http://localhost:3000/players/${currentPlayerIndex+1}/setcurrent`, {
 
-            players = [
-                {
-                    name: "Oscar",
-                    win: "You Win!",
-                    position: 0,
-                    element: null,
-                    color: 'cyan'
-                },
-                {
-                    name: "Carlos",
-                    win: "You Win ooooo!",
-                    position: 0,
-                    element: null,
-                    color: 'green'
-                },
-                {
-                    name: "Miguel",
-                    win: "You Win ooooo!",
-                    position: 0,
-                    element: null,
-                    color: 'pink'
-                }
-            ];
-
-            currentPlayerIndex = getRandom(players.length);
-
-            var styleText = ".gameBoard > .players > div::before {" +
+          })
+            .then(function (response) {
+              var styleText = ".gameBoard > .players > div::before {" +
                 "content: ''; display: block; float: left;" +
                 "width: 24px; height: 24px; box-shadow: inset -2px -2px #565656;" +
                 "margin-right: 5px; border-radius: 12px;}"
 
-            players.forEach(function(player, index){
+              players.forEach(function (player, index) {
                 var elementId = "player" + index;
-                styleText += ".gameBoard > .players > #" + elementId  + "::before {" +
-                "background: " + player.color + ";} ";
+                styleText += ".gameBoard > .players > #" + elementId + "::before {" +
+                  "background: " + player.color + ";} ";
                 var playerDiv = document.createElement("div");
                 playerDiv.setAttribute("id", elementId);
                 var playerSpan = document.createElement('span');
@@ -348,41 +328,47 @@ var app = (function() {
                 playerSpan.appendChild(text);
                 playerDiv.appendChild(playerSpan);
                 document.getElementById('playersList').appendChild(playerDiv);
-            });
+              });
 
-            createStyleSheet(styleText);
-            setCurrentPlayer();
+              createStyleSheet(styleText);
+              setCurrentPlayer();
 
-            basisInterpolator = d3.svg.line()
+              basisInterpolator = d3.svg.line()
                 .x(function (d) { return d.x; })
                 .y(function (d) { return d.y; })
                 .interpolate("basis");
 
-            cardinalInterpolator = d3.svg.line()
+              cardinalInterpolator = d3.svg.line()
                 .x(function (d) { return d.x; })
                 .y(function (d) { return d.y; })
                 .interpolate("cardinal");
 
-            linearInterpolator = d3.svg.line()
+              linearInterpolator = d3.svg.line()
                 .x(function (d) { return d.x; })
                 .y(function (d) { return d.y; })
                 .interpolate("linear");
 
-            gridReference = [];
-            buildGameBoard();
+              gridReference = [];
+              buildGameBoard();
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
 
-        }, 1000);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+  }
 
-    }
+  function fixPositionCollisions() {
+    var positionMatches = {};
+    var matchPositions = [];
+    var i;
 
-    function fixPositionCollisions() {
-        var positionMatches = {};
-        var matchPositions = [];
-        var i;
-
-        for (i = 0; i < players.length; i++) {
-            if (players[i].element != null) {
-                var match = positionMatches[players[i].position];
+    for (i = 0; i < players.length; i++) {
+      if (players[i].element != null) {
+        var match = positionMatches[players[i].position];
                 if (!match) {
                     positionMatches[players[i].position] = [i];
                 } else {
