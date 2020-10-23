@@ -243,6 +243,40 @@ module.exports = function (fastify, opts, done) {
       });
     }
   );
+  fastify.get(`${prefix}/:id`,
+    {
+      schema: {
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        description: 'Retorna el listado de players',
+        tags: ['Players'],
+        summary: 'Listado completo de jugadores',
+        params: {
+          type: 'object',
+          properties: {
+            id: { type: 'number' },
+          }
+        },
+        response: {
+          201: {
+            description: 'Succesful response',
+            type: 'object',
+            properties: {
+              hello: { type: 'string' }
+            }
+          }
+        }
+      }
+    },
+    (request, response) => {
+      Player.where({id: request.params.id}).fetch().then(function (player) {
+        return response.send(player);
+      });
+    }
+  );
   fastify.get(`${prefix}/ingame`,
     {
       schema: {

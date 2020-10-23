@@ -42,7 +42,7 @@ h1{
   transition: 0.3s;
 }
 
-.lados i:hover{
+.lados.active i:hover{
   color: #fff;
   transform: scale(1.6);
 }
@@ -67,6 +67,10 @@ h1{
   font-weight: bold;
 }
 
+.disabled {
+    opacity: 0.5;
+    cursor: default;
+}
 
 #userpuntos, #cpupuntos{
   color: #fff;
@@ -99,7 +103,7 @@ h1{
 
 
 @media all and (max-width: 1102px){
-  .lados i:hover{
+  .lados.active i:hover{
     transform: scale(1.2);
   }
 }
@@ -108,7 +112,7 @@ h1{
     flex-wrap: wrap;
   }
 
-  .lados i:hover{
+  .lados.active i:hover{
     color: #fff;
     transform: scale(1);
   }

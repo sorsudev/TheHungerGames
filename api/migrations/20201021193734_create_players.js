@@ -14,6 +14,9 @@ exports.up = function(knex) {
     table.boolean('is_current').defaultTo(false);
     table.integer('positive_score').defaultTo(0);
     table.integer('negative_score').defaultTo(0);
+    table.integer('current_game_election').defaultTo(0);
+    table.integer('current_game_score').defaultTo(0);
+    table.integer('current_game_lifes').defaultTo(3);
     table.timestamps();
   });
 };
