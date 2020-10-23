@@ -1,5 +1,6 @@
 require('dotenv').config();
 const prefix = '/players',
+  chunk = (arr, size) => arr.reduce((acc, e, i) => (i % size ? acc[acc.length - 1].push(e) : acc.push([e]), acc), []);
   Player = require('../models/player').Player;
 
 module.exports = function (fastify, opts, done) {
@@ -265,9 +266,56 @@ module.exports = function (fastify, opts, done) {
       }
     },
     (request, response) => {
-      Player.where({in_game: true}).orderBy('id', 'ASC').fetchAll().then(function (players) {
+      return Player.where({in_game: true}).orderBy('id', 'ASC').fetchAll().then(function (players) {
         return response.send(players);
       });
+    }
+  );
+  fastify.get(`${prefix}/getvsplayer/:id`,
+    {
+      schema: {
+        security: [
+          {
+            Bearer: []
+          }
+        ],
+        description: 'Retorna el listado de players',
+        tags: ['Players'],
+        summary: 'Listado completo de jugadores',
+        params: {
+          type: 'object',
+          properties: {
+            id: { type: 'number' },
+          }
+        },
+        response: {
+          201: {
+            description: 'Succesful response',
+            type: 'object',
+            properties: {
+              hello: { type: 'string' }
+            }
+          }
+        }
+      }
+    },
+    (request, response) => {
+      return Player.where({in_game: true}).orderBy('positive_score', 'DESC').fetchAll()
+        .then(function (players) {
+          let playersIds = players.map( (player) => player.id);
+          let groups = chunk(playersIds, 2);
+          let playersVsIds = groups.find(playersGroup => playersGroup.indexOf(request.params.id) > -1);
+          return Player.forge().where('id', 'in', playersVsIds).fetchAll()
+            .then( (players) => {
+              return response.send(players);
+            })
+            .catch( (err) => {
+              return response.send(err);
+            });
+        })
+        .catch((err) => {
+          return response.send(err);
+        });
     }
   );
   fastify.post(`${prefix}/sign_in`,

@@ -89,11 +89,11 @@ h1{
 .vidas i{
   color: #f00;
 }
-#vida1, #vida2, #vida3, #cpuvida1, #cpuvida2, #cpuvida3{
+#P1vida1, #P1vida2, #P1vida3, #P2vida1, #P2vida2, #P2vida3{
   display: inline;
   text-shadow: 0 0 5px #fff;
 }
-#muerte1, #muerte2, #muerte3, #cpumuerte1, #cpumuerte2, #cpumuerte3{
+#P1muerte1, #P1muerte2, #P1muerte3, #P2muerte1, #P2muerte2, #P2muerte3{
   display: none;
 }
 
