@@ -43,7 +43,7 @@ var cont = 1;
 function sistemaPuntos(status) {
   if (status === 'win') {
     let playerId = localStorage.getItem('playerId');
-    var puntos = localStorage.getItem('currentPlayerScore');
+    var puntos = parseInt(localStorage.getItem('currentPlayerScore'));
     axios.patch(`http://localhost:3000/players/${playerId}`, {
       current_game_score: puntos+=1,
     })
@@ -100,6 +100,26 @@ function sistemaPuntos(status) {
 }
 
 function reiniciar() {
+  let playerId =localStorage.getItem('playerId');
+  axios.get(`http://localhost:3000/players/getvsplayer/${playerId}`)
+    .then(function (response) {
+      response.data.forEach((player) => {
+        axios.patch(`http://localhost:3000/players/${player.id}`, {
+          current_game_score: 0
+        })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      });
+      clearInterval(colorFondo);
+      document.body.style.background = "#f4f4f4";
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   puntoscpu = 0;
   puntosuser = 0;
   document.getElementById("P1puntos").innerHTML = "0";
@@ -137,6 +157,19 @@ function perder() {
     x.style.backgroundColor = x.style.backgroundColor == "red" ? "DarkRed" : "red";
   }
 }
+
+function empate() {
+  axios.patch(`http://localhost:3000/players/${vsPlayer}`, {
+    current_game_election: 0
+  })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
 function parar() {
   let playerId =localStorage.getItem('playerId');
   axios.get(`http://localhost:3000/players/getvsplayer/${playerId}`)
@@ -165,7 +198,7 @@ function waitTurn(cb){
     axios.get(`http://localhost:3000/players/${vsPlayer}`)
       .then(function (response) {
         if (response.data.current_game_election === 0)
-          return waitTurn();
+          return waitTurn(cb);
 
         return cb(response.data.current_game_election);
       })
@@ -207,6 +240,7 @@ function piedra() {
             P2papel.style.display = "none";
             P2tijera.style.display = "none";
             resultado.innerHTML = "Empate";
+            empate();
             break;
           case 2:
             P2piedra.style.display = "none";
@@ -270,6 +304,7 @@ function papel() {
             P2papel.style.display = "block";
             P2tijera.style.display = "none";
             resultado.innerHTML = "Empate";
+            empate();
             break;
           case 3:
             P2piedra.style.display = "none";
@@ -331,6 +366,7 @@ function tijera() {
             P2papel.style.display = "none";
             P2tijera.style.display = "block";
             resultado.innerHTML = "Empate";
+            empate();
             break;
         }
       });
