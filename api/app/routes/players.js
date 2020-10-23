@@ -195,7 +195,23 @@ module.exports = function (fastify, opts, done) {
         return response.send(player);
       })
       .catch((err) => {
-        return response.send(err);
+        return Player.fetchAll().then(function (players) {
+          let playersIds = players.map((player) => player.id);
+          let playerId = Math.floor(Math.random() * playersIds.length) + 1;
+          return Player.where({ id: playerId }).fetch()
+            .then((player) => {
+              return player.save({ is_current: true }, { patch: true })
+                .then((player) => {
+                  return response.send(player);
+                })
+                .catch((err) => {
+                  return response.send(err);
+                });
+            })
+            .catch((err) => {
+              return response.send(err);
+            });
+        });
       });
   });
   fastify.get(`${prefix}`,
@@ -249,7 +265,7 @@ module.exports = function (fastify, opts, done) {
       }
     },
     (request, response) => {
-      Player.where({in_game: true}).fetchAll().then(function (players) {
+      Player.where({in_game: true}).orderBy('id', 'ASC').fetchAll().then(function (players) {
         return response.send(players);
       });
     }

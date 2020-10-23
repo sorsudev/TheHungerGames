@@ -242,9 +242,11 @@ var app = (function() {
         seededRandom,
         inResize = false,
         pendingResize = false,
+        actualWinScore = 1000,
         snakePositions;
 
     var players = [];
+    var playersIds = [];
 
     function getRandom(n) {
         return Math.floor(Math.random() * n);
@@ -298,20 +300,40 @@ var app = (function() {
         document.getElementById('messages').innerHTML = '';
     }
 
-    function run() {
+    function waitTurn(){
+      setTimeout(() => {
+          axios.get(`http://localhost:3000/players/getcurrent`)
+            .then((response) => {
+              if (response.data.id.toString() === localStorage.getItem('playerId'))
+                location.reload();
 
+              document.getElementById('player').innerText = "Turno de " + response.data.name;
+              waitTurn();
+            })
+            .catch( (err) => {
+              console.log(err);
+            });
+      }, 1000 );
+    }
+
+    function run() {
       button = document.getElementById("play");
       dialog = document.getElementById("dialog");
       dialogText = document.getElementById("dialogText");
       return axios.get('http://localhost:3000/players/ingame')
         .then( (response) => {
           players = response.data;
-
-          axios.get(`http://localhost:3000/players/getcurrent`, {
-
-          })
+          if (players.length === 1)
+            window.location.href = '/piedrapapeltijera/';
+          playersIds = players.map( (player) => player.id);
+          axios.get(`http://localhost:3000/players/getcurrent`)
             .then(function (response) {
-              currentPlayerIndex = response.id;
+              currentPlayerIndex = playersIds.indexOf(response.data.id);
+              actualWinScore = players.length * 1000;
+              if (response.data.id.toString() !== localStorage.getItem('playerId')){
+                button.className = "disabled";
+                waitTurn();
+              }
               var styleText = ".gameBoard > .players > div::before {" +
                 "content: ''; display: block; float: left;" +
                 "width: 24px; height: 24px; box-shadow: inset -2px -2px #565656;" +
@@ -762,7 +784,9 @@ var app = (function() {
             }, 2000);
         } else {
             inPlay = false;
-            button.className = "";
+            let currentPlayerId = playersIds[currentPlayerIndex];
+            if (currentPlayerId.toString() === localStorage.getItem('playerId'))
+              button.className = "";
             if (pendingResize) {
                 inResize = false;
                 resize();
@@ -848,23 +872,15 @@ var app = (function() {
             if (n > 0) {
                 n--;
                 if (currentPlayer.position > 0) {
-                    var path = buildHop(currentPlayer.position);
-                    currentPlayer.position++;
-                    axios.patch(`http://localhost:3000/players/${currentPlayer.id}`, {
-                      position: currentPlayer.position
-                    })
-                      .then(function (response) {
-                        animate(path, currentPlayer.element, 300, -counterRadius, -counterRadius, function () { doHop(n) });
-                      })
-                      .catch(function (error) {
-                        console.log(error);
-                      });
+                  var path = buildHop(currentPlayer.position);
+                  currentPlayer.position++;
+                  animate(path, currentPlayer.element, 300, -counterRadius, -counterRadius, function () { doHop(n) });
                 } else {
-                    {
-                        currentPlayer.position = 1;
-                        buildMarker(currentPlayer);
-                    }
-                    doHop(n);
+                  {
+                    currentPlayer.position = 1;
+                    buildMarker(currentPlayer);
+                  }
+                  doHop(n);
                 }
 
             } else {
@@ -887,10 +903,30 @@ var app = (function() {
     }
 
     function finishPlay() {
+      var currentPlayerId = playersIds[currentPlayerIndex];
+      axios.patch(`http://localhost:3000/players/${currentPlayerId}`, {
+        position: currentPlayer.position
+      })
+        .then(function (response) {
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
         if (currentPlayer.position === endPosition) {
-            players.splice(currentPlayerIndex, 1);
-            if (players.length === 1)
-                console.log('End game');
+          axios.patch(`http://localhost:3000/players/${currentPlayerId}`, {
+            positive_score: actualWinScore,
+            in_game: false
+          })
+            .then(function (response) {
+              players.splice(currentPlayerIndex, 1);
+              if (players.length === 1)
+              alert(`Has ganado ${response.data.positive_score} puntos`);
+              alert('End game');
+              window.location.href = '/piedrapapeltijera/';
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
         } else {
             fixPositionCollisions();
         }
@@ -898,6 +934,14 @@ var app = (function() {
         if (currentPlayerIndex >= players.length) {
             currentPlayerIndex = 0;
         }
+        currentPlayerId = playersIds[currentPlayerIndex];
+        axios.patch(`http://localhost:3000/players/${currentPlayerId}/setcurrent`)
+          .then(function (response) {
+            waitTurn();
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
         setCurrentPlayer();
     }
 
